@@ -2,14 +2,20 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
-  <title>Abo Ameer – صانع التشكيلات</title>
+  <title>Abo Ameer Lineups ⚽ | تشكيلتك باحتراف</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="أنشئ تشكيلتك الكروية باحتراف، شارك الرابط مع فريقك، واحجز مركزك في الملعب.">
+  <meta name="theme-color" content="#0d47a1" />
+  <link rel="icon" type="image/png" href="logo.png" />
+
   <style>
     :root {
-      --bg-gradient: linear-gradient(135deg, #050816, #111827, #020617);
-      --card-bg: rgba(15, 23, 42, 0.9);
-      --border-soft: rgba(148, 163, 184, 0.4);
+      --bg-gradient: linear-gradient(135deg, #001a33, #020617, #003366);
+      --card-bg: rgba(15, 23, 42, 0.96);
+      --border-soft: rgba(148, 163, 184, 0.45);
       --text-main: #e5e7eb;
+      --accent-primary: #0d47a1;
+      --accent-secondary: #e53935;
       --pitch-line: rgba(226, 232, 240, 0.5);
     }
 
@@ -17,7 +23,7 @@
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Cairo", sans-serif;
     }
 
     body {
@@ -45,7 +51,7 @@
       justify-content: space-between;
       padding: 10px 16px;
       border-radius: 999px;
-      background: linear-gradient(120deg, rgba(15,23,42,0.95), rgba(15,23,42,0.8));
+      background: linear-gradient(120deg, rgba(15,23,42,0.98), rgba(15,23,42,0.85));
       border: 1px solid var(--border-soft);
       backdrop-filter: blur(18px);
       gap: 8px;
@@ -59,16 +65,17 @@
     }
 
     .logo-badge {
-      width: 34px;
-      height: 34px;
+      width: 36px;
+      height: 36px;
       border-radius: 12px;
       background: radial-gradient(circle at 30% 20%, #22c55e, #16a34a, #14532d);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-weight: 700;
+      font-weight: 800;
       font-size: 18px;
       color: #e5e7eb;
+      box-shadow: 0 10px 25px rgba(22, 163, 74, 0.8);
     }
 
     .logo-text-main {
@@ -100,18 +107,29 @@
       cursor: pointer;
       white-space: nowrap;
       border: none;
+      transition: 0.2s ease-in-out;
     }
 
     .primary-btn {
-      background: radial-gradient(circle at 10% 0, #22c55e, #16a34a);
+      background: linear-gradient(135deg, #0d47a1, #1976d2);
       color: #f9fafb;
-      box-shadow: 0 12px 30px rgba(22, 163, 74, 0.7);
+      box-shadow: 0 12px 30px rgba(13,71,161,0.7);
     }
 
     .secondary-btn {
-      background: rgba(15,23,42,0.95);
+      background: rgba(15,23,42,0.96);
       color: #e5e7eb;
       border: 1px solid rgba(148, 163, 184, 0.6);
+    }
+
+    .primary-btn:hover {
+      transform: translateY(-1px) scale(1.03);
+      box-shadow: 0 16px 40px rgba(13,71,161,0.9);
+    }
+
+    .secondary-btn:hover {
+      border-color: #22c55e;
+      transform: translateY(-1px);
     }
 
     .layout {
@@ -168,7 +186,7 @@
       padding: 6px 9px;
       border-radius: 8px;
       border: 1px solid rgba(55, 65, 81, 0.9);
-      background: rgba(15, 23, 42, 0.95);
+      background: rgba(15, 23, 42, 0.96);
       color: #e5e7eb;
       font-size: 12px;
       outline: none;
@@ -197,21 +215,23 @@
     }
 
     .kit-preview {
-      width: 24px;
-      height: 24px;
+      width: 26px;
+      height: 26px;
       border-radius: 8px;
       border: 1px solid rgba(15,23,42,0.8);
-      background: rgba(15,23,42,0.9);
+      background: rgba(15,23,42,0.95);
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 11px;
+      font-weight: 600;
     }
 
     .pitch-card {
-      background: radial-gradient(circle at top, rgba(56,189,248,0.18), transparent),
-                  radial-gradient(circle at bottom, rgba(34,197,94,0.25), transparent),
-                  rgba(15,23,42,0.95);
+      background:
+        radial-gradient(circle at top, rgba(56,189,248,0.18), transparent),
+        radial-gradient(circle at bottom, rgba(34,197,94,0.25), transparent),
+        rgba(15,23,42,0.97);
       border-radius: 22px;
       padding: 10px;
       border: 1px solid rgba(148,163,184,0.5);
@@ -263,7 +283,7 @@
       padding: 2px 6px;
       border-radius: 999px;
       border: 1px solid rgba(148,163,184,0.7);
-      background: rgba(15,23,42,0.95);
+      background: rgba(15,23,42,0.96);
       color: #e5e7eb;
       font-size: 11px;
       outline: none;
@@ -407,10 +427,8 @@
       z-index: 0;
     }
 
-    /* القميص الواقعي */
-
+    /* القميص الواقعي (صورة PNG بدون إطار) */
     .shirt {
-      /* حاوية بسيطة بدون إطار ولا خلفية */
       width: 64px;
       height: 64px;
       position: relative;
@@ -419,7 +437,7 @@
       justify-content: center;
       background: none;
       border-radius: 0;
-      box-shadow: none; /* لا نضيف ظل على الحواف */
+      box-shadow: none;
       overflow: visible;
     }
 
@@ -429,11 +447,10 @@
       height: 100%;
       object-fit: contain;
       opacity: 1;
-      filter: none; /* نلغي أي drop-shadow أو تعديل ألوان */
+      filter: none;
       pointer-events: none;
     }
 
-    /* نخفي أي طبقات تلوين إضافية */
     .shirt-tint,
     .shirt-highlight {
       display: none !important;
@@ -450,7 +467,6 @@
       text-shadow: 0 1px 3px rgba(0,0,0,0.9);
       z-index: 2;
     }
-
 
     .player-name {
       font-size: 9px;
@@ -473,7 +489,7 @@
       padding: 8px;
       border-radius: 12px;
       border: 1px dashed rgba(75,85,99,0.9);
-      background: rgba(15,23,42,0.95);
+      background: rgba(15,23,42,0.97);
     }
 
     .bench-global {
@@ -500,8 +516,14 @@
       padding: 4px 8px;
       border-radius: 999px;
       border: 1px solid rgba(75,85,99,0.9);
-      background: rgba(15,23,42,0.95);
+      background: rgba(15,23,42,0.96);
       cursor: pointer;
+      transition: 0.15s ease;
+    }
+
+    .bench-item:hover {
+      border-color: #22c55e;
+      transform: translateY(-1px);
     }
 
     .footer-tip {
@@ -552,7 +574,7 @@
         </div>
 
         <div class="field-group">
-          <label class="field-label">لون القميص</label>
+          <label class="field-label">لون الفريق (للعرض فقط)</label>
           <div class="color-row">
             <input id="teamA-color" type="color" value="#2563eb" />
             <div class="kit-preview" id="teamA-kit-preview">A</div>
@@ -621,7 +643,7 @@
         </div>
 
         <div class="field-group">
-          <label class="field-label">لون القميص</label>
+          <label class="field-label">لون الفريق (للعرض فقط)</label>
           <div class="color-row">
             <input id="teamB-color" type="color" value="#dc2626" />
             <div class="kit-preview" id="teamB-kit-preview">B</div>
@@ -631,7 +653,7 @@
     </main>
 
     <div class="bench bench-global">
-      <div class="bench-title">الإحتياط (ضغط لتعديل الاسم)</div>
+      <div class="bench-title">الإحتياط (اضغط على الرقم لتعديل الاسم)</div>
       <div class="bench-list" id="benchGlobal">
         <div class="bench-item">12</div>
         <div class="bench-item">13</div>
@@ -646,7 +668,7 @@
     </div>
 
     <div class="footer-tip">
-      يمكنك سحب اللاعبين لتعديل المراكز، تغيير عدد الأساسيين، مشاركة التشكيلة أو حفظها كصورة. يمكن لكل لاعب حجز مركز واحد، ويمكنه إزالة اسمه من مركزه في حال الاعتذار عن اللعب.
+      اسحب اللاعبين لتعديل المراكز، قم بتغيير عدد الأساسيين، ثم شارك التشكيلة أو احفظها كصورة. كل لاعب يمكنه حجز مركز واحد، ويمكنه إزالة اسمه من مركزه في حال الاعتذار عن اللعب.
     </div>
   </div>
 
@@ -910,12 +932,10 @@ function createPlayer(team, index, x, y, color) {
 
   const shirtEl = document.createElement('div');
   shirtEl.className = 'shirt';
-  shirtEl.style.setProperty('--shirt-color', color);
 
   const imgEl = document.createElement('img');
   imgEl.className = 'shirt-img';
 
-  // قميص مختلف لكل فريق
   if (team === 'A') {
     imgEl.src = 'shirt_teamA.png';
   } else {
@@ -923,7 +943,6 @@ function createPlayer(team, index, x, y, color) {
   }
 
   imgEl.alt = '';
-
 
   const tintEl = document.createElement('div');
   tintEl.className = 'shirt-tint';
@@ -1082,7 +1101,6 @@ async function createShareLink() {
 
     let copied = false;
 
-    // المحاولة الأولى: واجهة النسخ الحديثة
     if (navigator.clipboard && navigator.clipboard.writeText) {
       try {
         await navigator.clipboard.writeText(url);
@@ -1092,7 +1110,6 @@ async function createShareLink() {
       }
     }
 
-    // المحاولة الثانية: طريقة قديمة (input + copy)
     if (!copied) {
       const dummy = document.createElement('input');
       dummy.value = url;
@@ -1110,7 +1127,6 @@ async function createShareLink() {
     if (copied) {
       alert('تم إنشاء رابط المشاركة (صالح لمدة 48 ساعة) وتم نسخه تلقائيًا.\n\nيمكنك الآن لصقه في أي مكان.\n\n' + url);
     } else {
-      // آخر حل: نعرضه في نافذة يمكن نسخها يدويًا
       window.prompt('تم إنشاء رابط المشاركة (صالح لمدة 48 ساعة). انسخ الرابط يدويًا:', url);
     }
   } catch (err) {
@@ -1118,7 +1134,6 @@ async function createShareLink() {
     alert('تعذر الاتصال بالسيرفر');
   }
 }
-
 
 async function enterGuestMode(id) {
   try {
