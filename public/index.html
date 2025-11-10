@@ -1061,26 +1061,64 @@ function createPlayer(team, index, x, y, color) {
 
 async function createShareLink() {
   const payload = getCurrentLineupPayload();
+
   try {
     const res = await fetch('/api/lineups', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
     });
+
     const data = await res.json();
+
     if (!res.ok) {
       alert('حدث خطأ أثناء إنشاء الرابط');
       console.error(data);
       return;
     }
+
     shareId = data.id;
     const url = window.location.origin + '?share=' + shareId;
-    alert('تم إنشاء رابط المشاركة (صالح لمدة 48 ساعة):\n\n' + url);
+
+    let copied = false;
+
+    // المحاولة الأولى: واجهة النسخ الحديثة
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      try {
+        await navigator.clipboard.writeText(url);
+        copied = true;
+      } catch (e) {
+        console.warn('clipboard api failed', e);
+      }
+    }
+
+    // المحاولة الثانية: طريقة قديمة (input + copy)
+    if (!copied) {
+      const dummy = document.createElement('input');
+      dummy.value = url;
+      document.body.appendChild(dummy);
+      dummy.select();
+      try {
+        document.execCommand('copy');
+        copied = true;
+      } catch (e) {
+        console.warn('execCommand copy failed', e);
+      }
+      document.body.removeChild(dummy);
+    }
+
+    if (copied) {
+      alert('تم إنشاء رابط المشاركة (صالح لمدة 48 ساعة) وتم نسخه تلقائيًا.\n\nيمكنك الآن لصقه في أي مكان.\n\n' + url);
+    } else {
+      // آخر حل: نعرضه في نافذة يمكن نسخها يدويًا
+      window.prompt('تم إنشاء رابط المشاركة (صالح لمدة 48 ساعة). انسخ الرابط يدويًا:', url);
+    }
   } catch (err) {
     console.error(err);
     alert('تعذر الاتصال بالسيرفر');
   }
 }
+
 
 async function enterGuestMode(id) {
   try {
