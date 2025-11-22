@@ -578,14 +578,41 @@
     }
     body.guest-mode .panel {
       display: none !important;
-    }
-    body.guest-mode .pitch-wrapper {
-      padding-top: 130%;
-    }
+body.guest-mode .pitch-wrapper {
+  padding-top: 62%; /* نفس النسبة العادية، ما نمدد الملعب */
+}
     body.guest-mode #export-image-btn,
     body.guest-mode #share-lineup-btn {
       display: none !important;
     }
+/* 🧭 في وضع الضيف: عرض واحد، الملعب يدور 90 درجة */
+body.guest-mode .app-shell {
+  max-width: 480px;
+}
+
+body.guest-mode .layout {
+  grid-template-columns: 1fr;
+}
+
+/* لو حاب تخفي لوحات الفريقين في وضع الضيف */
+body.guest-mode .panel {
+  display: none !important;
+}
+
+/* تدوير الملعب نفسه */
+body.guest-mode .pitch {
+  transform: rotate(90deg);
+  transform-origin: 50% 50%;
+}
+
+/* تدوير اللاعبين عكس الملعب لكي يظهر القميص مستقيم */
+body.guest-mode .player {
+  transform: translate(-50%, -50%) rotate(-90deg);
+}
+
+/* لو عندك تعريف سابق لـ .player خارج guest-mode فهو يظل كما هو.
+   هذا الـ rule يشتغل فقط عندما body عليه guest-mode. */
+
   </style>
 </head>
 <body>
@@ -863,49 +890,32 @@
     }
 
     // ⚽ توزيع المراكز
-    function ensurePositionsForTeam(team) {
-      const form = team === 'A' ? teamAFormationSelect.value : teamBFormationSelect.value;
-      const base = formations[form] || formations['4-3-3'];
+function ensurePositionsForTeam(team) {
+  const form = team === 'A' ? teamAFormationSelect.value : teamBFormationSelect.value;
+  const base = formations[form] || formations['4-3-3'];
 
-      const isGuestVertical = document.body.classList.contains('guest-mode');
-
-      // في وضع الضيف: فريق A في النصف العلوي، فريق B في النصف السفلي
-      if (isGuestVertical) {
-        positions[team] = base.slice(0, playersCount).map((p) => {
-          const x = p.x;
-          const yTop = p.y * 0.5;          // 0 -> 50
-          const yBottom = 50 + p.y * 0.5; // 50 -> 100
-          if (team === 'A') {
-            return { x: x, y: yTop };
-          } else {
-            return { x: x, y: yBottom };
-          }
-        });
-        return;
+  // التوزيع العادي القديم (فريق A يسار، فريق B يمين)
+  if (!positions[team] || positions[team].length === 0) {
+    positions[team] = base.slice(0, playersCount).map((p) => {
+      if (team === 'A') {
+        return { x: p.x, y: p.y };
       }
-
-      // في وضع المالك: الشكل القديم (يسار/يمين)
-      if (!positions[team] || positions[team].length === 0) {
-        positions[team] = base.slice(0, playersCount).map((p) => {
-          if (team === 'A') {
-            return { x: p.x, y: p.y };
-          }
-          return { x: 100 - p.x, y: p.y };
-        });
-      } else {
-        if (positions[team].length < playersCount) {
-          const extra = base.slice(positions[team].length, playersCount).map((p) => {
-            if (team === 'A') {
-              return { x: p.x, y: p.y };
-            }
-            return { x: 100 - p.x, y: p.y };
-          });
-          positions[team] = positions[team].concat(extra);
-        } else if (positions[team].length > playersCount) {
-          positions[team] = positions[team].slice(0, playersCount);
+      return { x: 100 - p.x, y: p.y };
+    });
+  } else {
+    if (positions[team].length < playersCount) {
+      const extra = base.slice(positions[team].length, playersCount).map((p) => {
+        if (team === 'A') {
+          return { x: p.x, y: p.y };
         }
-      }
+        return { x: 100 - p.x, y: p.y };
+      });
+      positions[team] = positions[team].concat(extra);
+    } else if (positions[team].length > playersCount) {
+      positions[team] = positions[team].slice(0, playersCount);
     }
+  }
+}
 
     function resetPositionsFromFormation() {
       positions.A = [];
