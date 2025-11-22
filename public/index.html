@@ -501,12 +501,12 @@
       transition: transform 0.08s ease;
     }
 
-    /* حارس مرمى بدون توهج */
+    /* حارس المرمى */
     .player--gk .shirt {
       transform: scale(1.03);
     }
 
-    /* حالة محجوز */
+    /* تمييز المراكز المحجوزة */
     .player--taken .player-name {
       color: #22c55e;
       font-weight: 700;
@@ -637,11 +637,9 @@
                 <option value="11" selected>11</option>
               </select>
             </div>
-
             <div id="reserve-counter" class="reserve-counter">
               المراكز المحجوزة: 0 / 22
             </div>
-
             <div id="mode-indicator">وضع المالك – اضبط تشكيلتك، حرّك المراكز، ثم شارك أو صدّر</div>
           </div>
         </div>
@@ -711,693 +709,706 @@
     </div>
 
     <div class="footer-tip">
-      اسحب اللاعبين لتعديل المراكز، قم بتغيير عدد الأساسيين، ثم شارك التشكيلة أو احفظها كصورة. كل لاعب يمكنه حجز مركز واحد، ويمكنه إزالة اسمك من مركزه في حال الاعتذار عن اللعب.
+      اسحب اللاعبين لتعديل المراكز، قم بتغيير عدد الأساسيين، ثم شارك التشكيلة أو احفظها كصورة. كل لاعب يمكنه حجز مركز واحد، ويمكنه إزالة اسمه من مركزه في حال الاعتذار عن اللعب.
     </div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
   <script>
-'use strict';
+    'use strict';
 
-const formations = {
-  "4-3-3": [
-    { x: 8,  y: 50 },
-    { x: 22, y: 18 }, { x: 22, y: 36 }, { x: 22, y: 64 }, { x: 22, y: 82 },
-    { x: 36, y: 26 }, { x: 36, y: 50 }, { x: 36, y: 74 },
-    { x: 50, y: 26 }, { x: 50, y: 50 }, { x: 50, y: 74 }
-  ],
-  "4-2-3-1": [
-    { x: 8,  y: 50 },
-    { x: 22, y: 18 }, { x: 22, y: 36 }, { x: 22, y: 64 }, { x: 22, y: 82 },
-    { x: 34, y: 38 }, { x: 34, y: 62 },
-    { x: 48, y: 26 }, { x: 48, y: 50 }, { x: 48, y: 74 },
-    { x: 60, y: 50 }
-  ],
-  "4-4-2": [
-    { x: 8,  y: 50 },
-    { x: 22, y: 18 }, { x: 22, y: 36 }, { x: 22, y: 64 }, { x: 22, y: 82 },
-    { x: 36, y: 18 }, { x: 36, y: 36 }, { x: 36, y: 64 }, { x: 36, y: 82 },
-    { x: 50, y: 40 }, { x: 50, y: 60 }
-  ],
-  "3-5-2": [
-    { x: 8,  y: 50 },
-    { x: 22, y: 24 }, { x: 22, y: 50 }, { x: 22, y: 76 },
-    { x: 34, y: 16 }, { x: 34, y: 84 },
-    { x: 38, y: 34 }, { x: 38, y: 50 }, { x: 38, y: 66 },
-    { x: 52, y: 40 }, { x: 52, y: 60 }
-  ],
-  // 3-4-1 = 9 لاعبين (حارس + 3 دفاع + 4 وسط + 1 صانع لعب/مهاجم)
-  "3-4-1": [
-    { x: 6,  y: 50 }, // GK متأخر قرب المرمى
-    { x: 18, y: 25 }, { x: 18, y: 50 }, { x: 18, y: 75 },
-    { x: 30, y: 20 }, { x: 30, y: 40 }, { x: 30, y: 60 }, { x: 30, y: 80 },
-    { x: 42, y: 50 }
-  ]
-};
+    const formations = {
+      "4-3-3": [
+        { x: 8,  y: 50 },
+        { x: 22, y: 18 }, { x: 22, y: 36 }, { x: 22, y: 64 }, { x: 22, y: 82 },
+        { x: 36, y: 26 }, { x: 36, y: 50 }, { x: 36, y: 74 },
+        { x: 50, y: 26 }, { x: 50, y: 50 }, { x: 50, y: 74 }
+      ],
+      "4-2-3-1": [
+        { x: 8,  y: 50 },
+        { x: 22, y: 18 }, { x: 22, y: 36 }, { x: 22, y: 64 }, { x: 22, y: 82 },
+        { x: 34, y: 38 }, { x: 34, y: 62 },
+        { x: 48, y: 26 }, { x: 48, y: 50 }, { x: 48, y: 74 },
+        { x: 60, y: 50 }
+      ],
+      "4-4-2": [
+        { x: 8,  y: 50 },
+        { x: 22, y: 18 }, { x: 22, y: 36 }, { x: 22, y: 64 }, { x: 22, y: 82 },
+        { x: 36, y: 18 }, { x: 36, y: 36 }, { x: 36, y: 64 }, { x: 36, y: 82 },
+        { x: 50, y: 40 }, { x: 50, y: 60 }
+      ],
+      "3-5-2": [
+        { x: 8,  y: 50 },
+        { x: 22, y: 24 }, { x: 22, y: 50 }, { x: 22, y: 76 },
+        { x: 34, y: 16 }, { x: 34, y: 84 },
+        { x: 38, y: 34 }, { x: 38, y: 50 }, { x: 38, y: 66 },
+        { x: 52, y: 40 }, { x: 52, y: 60 }
+      ],
+      // 3-4-1 بعد تأخير الخطوط لتفادي التداخل
+      "3-4-1": [
+        { x: 6,  y: 50 }, // GK
 
-const pitchEl = document.getElementById('pitch');
-const pitchCardEl = document.getElementById('pitch-card');
-const labelTeamA = document.getElementById('label-teamA');
-const labelTeamB = document.getElementById('label-teamB');
-const modeIndicator = document.getElementById('mode-indicator');
-const reserveCounterEl = document.getElementById('reserve-counter');
+        { x: 18, y: 25 },
+        { x: 18, y: 50 },
+        { x: 18, y: 75 },
 
-const teamANameInput = document.getElementById('teamA-name');
-const teamBNameInput = document.getElementById('teamB-name');
-const teamAFormationSelect = document.getElementById('teamA-formation');
-const teamBFormationSelect = document.getElementById('teamB-formation');
-const teamAColorInput = document.getElementById('teamA-color');
-const teamBColorInput = document.getElementById('teamB-color');
-const teamAKitPreview = document.getElementById('teamA-kit-preview');
-const teamBKitPreview = document.getElementById('teamB-kit-preview');
-const newSetupBtn = document.getElementById('new-setup-btn');
-const shareBtn = document.getElementById('share-lineup-btn');
-const exportBtn = document.getElementById('export-image-btn');
-const benchGlobal = document.getElementById('benchGlobal');
-const playersCountSelect = document.getElementById('players-count');
+        { x: 30, y: 20 },
+        { x: 30, y: 40 },
+        { x: 30, y: 60 },
+        { x: 30, y: 80 },
 
-let mode = 'owner';
-let shareId = null;
-let playersCount = 11;
+        { x: 42, y: 50 }
+      ]
+    };
 
-let playersData = {
-  A: Array(11).fill(null).map((_, i) => ({ number: i + 1, name: '', claimedBy: null })),
-  B: Array(11).fill(null).map((_, i) => ({ number: i + 1, name: '', claimedBy: null }))
-};
+    const pitchEl = document.getElementById('pitch');
+    const pitchCardEl = document.getElementById('pitch-card');
+    const labelTeamA = document.getElementById('label-teamA');
+    const labelTeamB = document.getElementById('label-teamB');
+    const modeIndicator = document.getElementById('mode-indicator');
+    const reserveCounterEl = document.getElementById('reserve-counter');
 
-let positions = { A: [], B: [] };
+    const teamANameInput = document.getElementById('teamA-name');
+    const teamBNameInput = document.getElementById('teamB-name');
 
-function getParticipantId() {
-  let pid = localStorage.getItem('participant_id');
-  if (!pid) {
-    pid = 'p_' + Date.now().toString(36) + Math.random().toString(36).substring(2, 8);
-    localStorage.setItem('participant_id', pid);
-  }
-  return pid;
-}
+    const teamAFormationSelect = document.getElementById('teamA-formation');
+    const teamBFormationSelect = document.getElementById('teamB-formation');
 
-function getCurrentLineupPayload() {
-  return {
-    teamAName: teamANameInput.value || 'فريق A',
-    teamBName: teamBNameInput.value || 'فريق B',
-    teamAColor: teamAColorInput.value,
-    teamBColor: teamBColorInput.value,
-    players: playersData,
-    playersCount: playersCount,
-    positions: positions
-  };
-}
+    const teamAColorInput = document.getElementById('teamA-color');
+    const teamBColorInput = document.getElementById('teamB-color');
 
-function updateTeamLabels() {
-  labelTeamA.innerText = teamANameInput.value || 'فريق A';
-  labelTeamB.innerText = teamBNameInput.value || 'فريق B';
-}
+    const teamAKitPreview = document.getElementById('teamA-kit-preview');
+    const teamBKitPreview = document.getElementById('teamB-kit-preview');
 
-function updateKitPreviews() {
-  teamAKitPreview.style.background = teamAColorInput.value;
-  teamBKitPreview.style.background = teamBColorInput.value;
-}
+    const newSetupBtn = document.getElementById('new-setup-btn');
+    const shareBtn = document.getElementById('share-lineup-btn');
+    const exportBtn = document.getElementById('export-image-btn');
 
-function enableBenchEditing(benchEl) {
-  const items = benchEl.querySelectorAll('.bench-item');
-  items.forEach((item) => {
-    item.addEventListener('click', () => {
-      const current = item.innerText;
-      const newName = prompt('اكتب اسم لاعب الاحتياط:', current);
-      if (newName !== null) {
-        const trimmed = newName.trim();
-        item.innerText = trimmed || current;
+    const benchGlobal = document.getElementById('benchGlobal');
+    const playersCountSelect = document.getElementById('players-count');
+
+    let mode = 'owner';
+    let shareId = null;
+    let playersCount = 11;
+
+    let playersData = {
+      A: Array(11).fill(null).map((_, i) => ({ number: i + 1, name: '', claimedBy: null })),
+      B: Array(11).fill(null).map((_, i) => ({ number: i + 1, name: '', claimedBy: null }))
+    };
+
+    let positions = { A: [], B: [] };
+
+    function getParticipantId() {
+      let pid = localStorage.getItem('participant_id');
+      if (!pid) {
+        pid = 'p_' + Date.now().toString(36) + Math.random().toString(36).substring(2, 8);
+        localStorage.setItem('participant_id', pid);
       }
-    });
-  });
-}
-
-function ensurePositionsForTeam(team) {
-  const form = team === 'A' ? teamAFormationSelect.value : teamBFormationSelect.value;
-  const base = formations[form] || formations['4-3-3'];
-
-  if (!positions[team] || positions[team].length === 0) {
-    positions[team] = base.slice(0, playersCount).map((p) => {
-      if (team === 'A') {
-        return { x: p.x, y: p.y };
-      }
-      return { x: 100 - p.x, y: p.y };
-    });
-  } else {
-    if (positions[team].length < playersCount) {
-      const extra = base.slice(positions[team].length, playersCount).map((p) => {
-        if (team === 'A') {
-          return { x: p.x, y: p.y };
-        }
-        return { x: 100 - p.x, y: p.y };
-      });
-      positions[team] = positions[team].concat(extra);
-    } else if (positions[team].length > playersCount) {
-      positions[team] = positions[team].slice(0, playersCount);
-    }
-  }
-}
-
-function resetPositionsFromFormation() {
-  positions.A = [];
-  positions.B = [];
-  ensurePositionsForTeam('A');
-  ensurePositionsForTeam('B');
-}
-
-function updateReserveCounter() {
-  if (!reserveCounterEl) return;
-
-  const count = playersCount || 11;
-  const totalSlots = count * 2;
-  let filled = 0;
-
-  ['A', 'B'].forEach(team => {
-    const arr = playersData[team] || [];
-    for (let i = 0; i < count; i++) {
-      if (arr[i] && arr[i].name && arr[i].name.trim() !== '') {
-        filled++;
-      }
-    }
-  });
-
-  reserveCounterEl.innerText = `المراكز المحجوزة: ${filled} / ${totalSlots}`;
-
-  if (filled === totalSlots) {
-    reserveCounterEl.classList.add('reserve-counter-full');
-  } else {
-    reserveCounterEl.classList.remove('reserve-counter-full');
-  }
-}
-
-function isLineupFull() {
-  const count = playersCount || 11;
-
-  function teamFull(team) {
-    const arr = playersData[team] || [];
-    let filled = 0;
-    for (let i = 0; i < count; i++) {
-      if (arr[i] && arr[i].name && arr[i].name.trim() !== '') {
-        filled++;
-      }
-    }
-    return filled === count;
-  }
-
-  return teamFull('A') && teamFull('B');
-}
-
-function renderTeams() {
-  const existingPlayers = pitchEl.querySelectorAll('.player');
-  existingPlayers.forEach((p) => p.remove());
-
-  ensurePositionsForTeam('A');
-  ensurePositionsForTeam('B');
-
-  const colorA = teamAColorInput.value;
-  const colorB = teamBColorInput.value;
-
-  positions.A.slice(0, playersCount).forEach((pos, idx) => {
-    createPlayer('A', idx, pos.x, pos.y, colorA);
-  });
-
-  positions.B.slice(0, playersCount).forEach((pos, idx) => {
-    createPlayer('B', idx, pos.x, pos.y, colorB);
-  });
-
-  updateReserveCounter();
-}
-
-function enableDrag(playerEl) {
-  let isDragging = false;
-  let dragMoved = false;
-
-  function getClientXY(e) {
-    if (e.touches && e.touches.length > 0) {
-      return { x: e.touches[0].clientX, y: e.touches[0].clientY };
-    }
-    return { x: e.clientX, y: e.clientY };
-  }
-
-  function onDown(e) {
-    if (mode !== 'owner') return;
-    e.preventDefault();
-    isDragging = true;
-    dragMoved = false;
-    playerEl.classList.add('dragging');
-
-    document.addEventListener('mousemove', onMove);
-    document.addEventListener('mouseup', onUp);
-    document.addEventListener('touchmove', onMove, { passive: false });
-    document.addEventListener('touchend', onUp);
-  }
-
-  function onMove(e) {
-    if (!isDragging) return;
-    e.preventDefault();
-    const rect = pitchEl.getBoundingClientRect();
-    const client = getClientXY(e);
-
-    let x = ((client.x - rect.left) / rect.width) * 100;
-    let y = ((client.y - rect.top) / rect.height) * 100;
-
-    x = Math.max(4, Math.min(96, x));
-    y = Math.max(8, Math.min(92, y));
-
-    const oldLeft = parseFloat(playerEl.style.left || '0');
-    const oldTop = parseFloat(playerEl.style.top || '0');
-    const dx = Math.abs(x - oldLeft);
-    const dy = Math.abs(y - oldTop);
-    if (dx > 0.3 || dy > 0.3) {
-      dragMoved = true;
+      return pid;
     }
 
-    playerEl.style.left = x + '%';
-    playerEl.style.top = y + '%';
-  }
-
-  function onUp() {
-    if (!isDragging) return;
-    isDragging = false;
-    playerEl.classList.remove('dragging');
-
-    document.removeEventListener('mousemove', onMove);
-    document.removeEventListener('mouseup', onUp);
-    document.removeEventListener('touchmove', onMove);
-    document.removeEventListener('touchend', onUp);
-
-    const team = playerEl.dataset.team;
-    const index = parseInt(playerEl.dataset.index, 10);
-    const x = parseFloat(playerEl.style.left);
-    const y = parseFloat(playerEl.style.top);
-    if (!positions[team]) positions[team] = [];
-    positions[team][index] = { x, y };
-
-    playerEl.dataset.dragMoved = dragMoved ? '1' : '0';
-  }
-
-  playerEl.addEventListener('mousedown', onDown);
-  playerEl.addEventListener('touchstart', onDown, { passive: false });
-}
-
-function createPlayer(team, index, x, y, color) {
-  const playerEl = document.createElement('div');
-  playerEl.className = 'player';
-  playerEl.style.left = x + '%';
-  playerEl.style.top = y + '%';
-  playerEl.dataset.team = team;
-  playerEl.dataset.index = index.toString();
-  playerEl.dataset.dragMoved = '0';
-
-  const playerInfo = playersData[team][index];
-
-  if (playerInfo.name && playerInfo.name.trim() !== '') {
-    playerEl.classList.add('player--taken');
-  }
-
-  if (index === 0) {
-    playerEl.classList.add('player--gk');
-  }
-
-  const shirtEl = document.createElement('div');
-  shirtEl.className = 'shirt';
-
-  const imgEl = document.createElement('img');
-  imgEl.className = 'shirt-img';
-
-  if (index === 0) {
-    imgEl.src = team === 'A' ? 'gk_teamA.png' : 'gk_teamB.png';
-  } else {
-    imgEl.src = team === 'A' ? 'shirt_teamA.png' : 'shirt_teamB.png';
-  }
-  imgEl.alt = '';
-
-  const tintEl = document.createElement('div');
-  tintEl.className = 'shirt-tint';
-
-  const hlEl = document.createElement('div');
-  hlEl.className = 'shirt-highlight';
-
-  const numberEl = document.createElement('div');
-  numberEl.className = 'shirt-number';
-  numberEl.innerText = playerInfo.number;
-
-  const nameEl = document.createElement('div');
-  nameEl.className = 'player-name';
-  nameEl.innerText = playerInfo.name || 'لاعب';
-
-  shirtEl.appendChild(imgEl);
-  shirtEl.appendChild(tintEl);
-  shirtEl.appendChild(hlEl);
-  shirtEl.appendChild(numberEl);
-
-  playerEl.appendChild(shirtEl);
-  playerEl.appendChild(nameEl);
-
-  playerEl.addEventListener('click', async () => {
-    if (playerEl.dataset.dragMoved === '1') {
-      playerEl.dataset.dragMoved = '0';
-      return;
+    function getCurrentLineupPayload() {
+      return {
+        teamAName: teamANameInput.value || 'فريق A',
+        teamBName: teamBNameInput.value || 'فريق B',
+        teamAColor: teamAColorInput.value,
+        teamBColor: teamBColorInput.value,
+        players: playersData,
+        playersCount: playersCount,
+        positions: positions
+      };
     }
 
-    const currentName = playersData[team][index].name || '';
-
-    if (mode === 'owner') {
-      const promptLabel = 'اكتب اسم اللاعب (' + playerInfo.number + ') في ' + (team === 'A' ? 'الفريق A' : 'الفريق B');
-      const newName = prompt(promptLabel, currentName);
-      if (newName !== null) {
-        const trimmed = newName.trim();
-        playersData[team][index].name = trimmed;
-        nameEl.innerText = trimmed || 'لاعب';
-
-        if (trimmed) {
-          playerEl.classList.add('player--taken');
-        } else {
-          playerEl.classList.remove('player--taken');
-        }
-
-        updateReserveCounter();
-      }
-      return;
+    function updateTeamLabels() {
+      labelTeamA.innerText = teamANameInput.value || 'فريق A';
+      labelTeamB.innerText = teamBNameInput.value || 'فريق B';
     }
 
-    if (mode === 'guest') {
-      const participantId = getParticipantId();
+    function updateKitPreviews() {
+      teamAKitPreview.style.background = teamAColorInput.value;
+      teamBKitPreview.style.background = teamBColorInput.value;
+    }
 
-      if (currentName.trim() !== '') {
-        if (playersData[team][index].claimedBy === participantId) {
-          const confirmRemove = confirm('أنت حالياً حاجز هذا المركز باسمك.\n\nهل تريد إزالة اسمك من هذا المركز؟');
-          if (confirmRemove) {
-            try {
-              const res = await fetch('/api/lineups/' + shareId + '/unclaim', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                  participantId: participantId,
-                  team: team,
-                  index: index
-                })
-              });
-              const data = await res.json();
-              if (!res.ok) {
-                alert(data.message || 'تعذر إزالة الاسم من المركز.');
-                return;
-              }
-              playersData = data.players;
-              nameEl.innerText = 'لاعب';
-              playerEl.classList.remove('player--taken');
-              updateReserveCounter();
-              alert('تمت إزالة اسمك من هذا المركز ويمكن لشخص آخر حجزه الآن.');
-            } catch (err) {
-              console.error(err);
-              alert('تعذر الاتصال بالسيرفر.');
-            }
+    function enableBenchEditing(benchEl) {
+      const items = benchEl.querySelectorAll('.bench-item');
+      items.forEach((item) => {
+        item.addEventListener('click', () => {
+          const current = item.innerText;
+          const newName = prompt('اكتب اسم لاعب الاحتياط:', current);
+          if (newName !== null) {
+            const trimmed = newName.trim();
+            item.innerText = trimmed || current;
           }
-        } else {
-          alert('هذا المركز محجوز بالفعل.');
+        });
+      });
+    }
+
+    function ensurePositionsForTeam(team) {
+      const form = team === 'A' ? teamAFormationSelect.value : teamBFormationSelect.value;
+      const base = formations[form] || formations['4-3-3'];
+
+      if (!positions[team] || positions[team].length === 0) {
+        positions[team] = base.slice(0, playersCount).map((p) => {
+          if (team === 'A') {
+            return { x: p.x, y: p.y };
+          }
+          return { x: 100 - p.x, y: p.y };
+        });
+      } else {
+        if (positions[team].length < playersCount) {
+          const extra = base.slice(positions[team].length, playersCount).map((p) => {
+            if (team === 'A') {
+              return { x: p.x, y: p.y };
+            }
+            return { x: 100 - p.x, y: p.y };
+          });
+          positions[team] = positions[team].concat(extra);
+        } else if (positions[team].length > playersCount) {
+          positions[team] = positions[team].slice(0, playersCount);
         }
-        return;
+      }
+    }
+
+    function resetPositionsFromFormation() {
+      positions.A = [];
+      positions.B = [];
+      ensurePositionsForTeam('A');
+      ensurePositionsForTeam('B');
+    }
+
+    function updateReserveCounter() {
+      if (!reserveCounterEl) return;
+
+      const count = playersCount || 11;
+      const totalSlots = count * 2;
+      let filled = 0;
+
+      ['A', 'B'].forEach(team => {
+        const arr = playersData[team] || [];
+        for (let i = 0; i < count; i++) {
+          if (arr[i] && arr[i].name && arr[i].name.trim() !== '') {
+            filled++;
+          }
+        }
+      });
+
+      reserveCounterEl.innerText = `المراكز المحجوزة: ${filled} / ${totalSlots}`;
+
+      if (filled === totalSlots) {
+        reserveCounterEl.classList.add('reserve-counter-full');
+      } else {
+        reserveCounterEl.classList.remove('reserve-counter-full');
+      }
+    }
+
+    function isLineupFull() {
+      const count = playersCount || 11;
+
+      function teamFull(team) {
+        const arr = playersData[team] || [];
+        let filled = 0;
+        for (let i = 0; i < count; i++) {
+          if (arr[i] && arr[i].name && arr[i].name.trim() !== '') {
+            filled++;
+          }
+        }
+        return filled === count;
       }
 
-      if (!shareId) {
-        alert('الرابط غير صالح للحجز.');
-        return;
+      return teamFull('A') && teamFull('B');
+    }
+
+    function renderTeams() {
+      const existingPlayers = pitchEl.querySelectorAll('.player');
+      existingPlayers.forEach((p) => p.remove());
+
+      ensurePositionsForTeam('A');
+      ensurePositionsForTeam('B');
+
+      const colorA = teamAColorInput.value;
+      const colorB = teamBColorInput.value;
+
+      positions.A.slice(0, playersCount).forEach((pos, idx) => {
+        createPlayer('A', idx, pos.x, pos.y, colorA);
+      });
+
+      positions.B.slice(0, playersCount).forEach((pos, idx) => {
+        createPlayer('B', idx, pos.x, pos.y, colorB);
+      });
+
+      updateReserveCounter();
+    }
+
+    function enableDrag(playerEl) {
+      let isDragging = false;
+      let dragMoved = false;
+
+      function getClientXY(e) {
+        if (e.touches && e.touches.length > 0) {
+          return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+        }
+        return { x: e.clientX, y: e.clientY };
       }
 
-      const playerName = prompt('اكتب اسمك لحجز هذا المركز:');
-      if (!playerName || !playerName.trim()) {
-        return;
+      function onDown(e) {
+        if (mode !== 'owner') return;
+        e.preventDefault();
+        isDragging = true;
+        dragMoved = false;
+        playerEl.classList.add('dragging');
+
+        document.addEventListener('mousemove', onMove);
+        document.addEventListener('mouseup', onUp);
+        document.addEventListener('touchmove', onMove, { passive: false });
+        document.addEventListener('touchend', onUp);
       }
+
+      function onMove(e) {
+        if (!isDragging) return;
+        e.preventDefault();
+        const rect = pitchEl.getBoundingClientRect();
+        const client = getClientXY(e);
+
+        let x = ((client.x - rect.left) / rect.width) * 100;
+        let y = ((client.y - rect.top) / rect.height) * 100;
+
+        x = Math.max(4, Math.min(96, x));
+        y = Math.max(8, Math.min(92, y));
+
+        const oldLeft = parseFloat(playerEl.style.left || '0');
+        const oldTop = parseFloat(playerEl.style.top || '0');
+        const dx = Math.abs(x - oldLeft);
+        const dy = Math.abs(y - oldTop);
+        if (dx > 0.3 || dy > 0.3) {
+          dragMoved = true;
+        }
+
+        playerEl.style.left = x + '%';
+        playerEl.style.top = y + '%';
+      }
+
+      function onUp() {
+        if (!isDragging) return;
+        isDragging = false;
+        playerEl.classList.remove('dragging');
+
+        document.removeEventListener('mousemove', onMove);
+        document.removeEventListener('mouseup', onUp);
+        document.removeEventListener('touchmove', onMove);
+        document.removeEventListener('touchend', onUp);
+
+        const team = playerEl.dataset.team;
+        const index = parseInt(playerEl.dataset.index, 10);
+        const x = parseFloat(playerEl.style.left);
+        const y = parseFloat(playerEl.style.top);
+        if (!positions[team]) positions[team] = [];
+        positions[team][index] = { x, y };
+
+        playerEl.dataset.dragMoved = dragMoved ? '1' : '0';
+      }
+
+      playerEl.addEventListener('mousedown', onDown);
+      playerEl.addEventListener('touchstart', onDown, { passive: false });
+    }
+
+    function createPlayer(team, index, x, y, color) {
+      const playerEl = document.createElement('div');
+      playerEl.className = 'player';
+      playerEl.style.left = x + '%';
+      playerEl.style.top = y + '%';
+      playerEl.dataset.team = team;
+      playerEl.dataset.index = index.toString();
+      playerEl.dataset.dragMoved = '0';
+
+      const playerInfo = playersData[team][index];
+
+      if (playerInfo.name && playerInfo.name.trim() !== '') {
+        playerEl.classList.add('player--taken');
+      }
+
+      if (index === 0) {
+        playerEl.classList.add('player--gk');
+      }
+
+      const shirtEl = document.createElement('div');
+      shirtEl.className = 'shirt';
+
+      const imgEl = document.createElement('img');
+      imgEl.className = 'shirt-img';
+
+      if (index === 0) {
+        imgEl.src = team === 'A' ? 'gk_teamA.png' : 'gk_teamB.png';
+      } else {
+        imgEl.src = team === 'A' ? 'shirt_teamA.png' : 'shirt_teamB.png';
+      }
+      imgEl.alt = '';
+
+      const tintEl = document.createElement('div');
+      tintEl.className = 'shirt-tint';
+
+      const hlEl = document.createElement('div');
+      hlEl.className = 'shirt-highlight';
+
+      const numberEl = document.createElement('div');
+      numberEl.className = 'shirt-number';
+      numberEl.innerText = playerInfo.number;
+
+      const nameEl = document.createElement('div');
+      nameEl.className = 'player-name';
+      nameEl.innerText = playerInfo.name || 'لاعب';
+
+      shirtEl.appendChild(imgEl);
+      shirtEl.appendChild(tintEl);
+      shirtEl.appendChild(hlEl);
+      shirtEl.appendChild(numberEl);
+
+      playerEl.appendChild(shirtEl);
+      playerEl.appendChild(nameEl);
+
+      playerEl.addEventListener('click', async () => {
+        if (playerEl.dataset.dragMoved === '1') {
+          playerEl.dataset.dragMoved = '0';
+          return;
+        }
+
+        const currentName = playersData[team][index].name || '';
+
+        if (mode === 'owner') {
+          const promptLabel = 'اكتب اسم اللاعب (' + playerInfo.number + ') في ' + (team === 'A' ? 'الفريق A' : 'الفريق B');
+          const newName = prompt(promptLabel, currentName);
+          if (newName !== null) {
+            const trimmed = newName.trim();
+            playersData[team][index].name = trimmed;
+            nameEl.innerText = trimmed || 'لاعب';
+
+            if (trimmed) {
+              playerEl.classList.add('player--taken');
+            } else {
+              playerEl.classList.remove('player--taken');
+            }
+
+            updateReserveCounter();
+          }
+          return;
+        }
+
+        if (mode === 'guest') {
+          const participantId = getParticipantId();
+
+          if (currentName.trim() !== '') {
+            if (playersData[team][index].claimedBy === participantId) {
+              const confirmRemove = confirm('أنت حالياً حاجز هذا المركز باسمك.\n\nهل تريد إزالة اسمك من هذا المركز؟');
+              if (confirmRemove) {
+                try {
+                  const res = await fetch('/api/lineups/' + shareId + '/unclaim', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                      participantId: participantId,
+                      team: team,
+                      index: index
+                    })
+                  });
+                  const data = await res.json();
+                  if (!res.ok) {
+                    alert(data.message || 'تعذر إزالة الاسم من المركز.');
+                    return;
+                  }
+                  playersData = data.players;
+                  nameEl.innerText = 'لاعب';
+                  playerEl.classList.remove('player--taken');
+                  updateReserveCounter();
+                  alert('تمت إزالة اسمك من هذا المركز ويمكن لشخص آخر حجزه الآن.');
+                } catch (err) {
+                  console.error(err);
+                  alert('تعذر الاتصال بالسيرفر.');
+                }
+              }
+            } else {
+              alert('هذا المركز محجوز بالفعل.');
+            }
+            return;
+          }
+
+          if (!shareId) {
+            alert('الرابط غير صالح للحجز.');
+            return;
+          }
+
+          const playerName = prompt('اكتب اسمك لحجز هذا المركز:');
+          if (!playerName || !playerName.trim()) {
+            return;
+          }
+
+          try {
+            const res = await fetch('/api/lineups/' + shareId + '/claim', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                participantId: participantId,
+                team: team,
+                index: index,
+                name: playerName.trim()
+              })
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+              if (data.error === 'already_used') {
+                alert('لديك مركز محجوز بالفعل. يمكنك إزالة اسمك من مركزك الحالي أولاً.');
+              } else if (data.error === 'slot_taken') {
+                alert('سبق أن شخص آخر حجز هذا المركز.');
+              } else if (data.error === 'link_expired' || res.status === 410) {
+                alert('انتهت صلاحية الرابط (48 ساعة).');
+              } else if (data.error === 'out_of_range') {
+                alert('هذا المركز خارج التشكيلة الأساسية الحالية.');
+              } else {
+                alert('حدث خطأ أثناء حجز المركز.');
+              }
+              return;
+            }
+
+            playersData = data.players;
+            nameEl.innerText = playerName.trim();
+            playerEl.classList.add('player--taken');
+            updateReserveCounter();
+
+            alert('تم حجز هذا المركز باسمك. يمكنك لاحقاً إزالة اسمك من نفس المركز إذا اعتذرت عن اللعب.');
+
+            if (isLineupFull()) {
+              alert('اكتملت جميع المراكز في التشكيلة الأساسية.');
+            }
+          } catch (err) {
+            console.error(err);
+            alert('تعذر الاتصال بالسيرفر.');
+          }
+        }
+      });
+
+      if (mode === 'owner') {
+        enableDrag(playerEl);
+      }
+
+      pitchEl.appendChild(playerEl);
+    }
+
+    async function createShareLink() {
+      const payload = getCurrentLineupPayload();
 
       try {
-        const res = await fetch('/api/lineups/' + shareId + '/claim', {
+        const res = await fetch('/api/lineups', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            participantId: participantId,
-            team: team,
-            index: index,
-            name: playerName.trim()
-          })
+          body: JSON.stringify(payload)
         });
 
         const data = await res.json();
 
         if (!res.ok) {
-          if (data.error === 'already_used') {
-            alert('لديك مركز محجوز بالفعل. يمكنك إزالة اسمك من مركزك الحالي أولاً.');
-          } else if (data.error === 'slot_taken') {
-            alert('سبق أن شخص آخر حجز هذا المركز.');
-          } else if (data.error === 'link_expired' || res.status === 410) {
-            alert('انتهت صلاحية الرابط (48 ساعة).');
-          } else if (data.error === 'out_of_range') {
-            alert('هذا المركز خارج التشكيلة الأساسية الحالية.');
-          } else {
-            alert('حدث خطأ أثناء حجز المركز.');
-          }
+          alert('حدث خطأ أثناء إنشاء الرابط');
+          console.error(data);
           return;
         }
 
-        playersData = data.players;
-        nameEl.innerText = playerName.trim();
-        playerEl.classList.add('player--taken');
-        updateReserveCounter();
+        shareId = data.id;
+        const url = window.location.origin + '?share=' + shareId;
 
-        alert('تم حجز هذا المركز باسمك. يمكنك لاحقاً إزالة اسمك من نفس المركز إذا اعتذرت عن اللعب.');
+        let copied = false;
 
-        if (isLineupFull()) {
-          alert('اكتملت جميع المراكز في التشكيلة الأساسية.');
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          try {
+            await navigator.clipboard.writeText(url);
+            copied = true;
+          } catch (e) {
+            console.warn('clipboard api failed', e);
+          }
+        }
+
+        if (!copied) {
+          const dummy = document.createElement('input');
+          dummy.value = url;
+          document.body.appendChild(dummy);
+          dummy.select();
+          try {
+            document.execCommand('copy');
+            copied = true;
+          } catch (e) {
+            console.warn('execCommand copy failed', e);
+          }
+          document.body.removeChild(dummy);
+        }
+
+        if (copied) {
+          alert('تم إنشاء رابط المشاركة (صالح لمدة 48 ساعة) وتم نسخه تلقائيًا.\n\nيمكنك الآن لصقه في أي مكان.\n\n' + url);
+        } else {
+          window.prompt('تم إنشاء رابط المشاركة (صالح لمدة 48 ساعة). انسخ الرابط يدويًا:', url);
         }
       } catch (err) {
         console.error(err);
-        alert('تعذر الاتصال بالسيرفر.');
+        alert('تعذر الاتصال بالسيرفر');
       }
     }
-  });
 
-  if (mode === 'owner') {
-    enableDrag(playerEl);
-  }
-
-  pitchEl.appendChild(playerEl);
-}
-
-async function createShareLink() {
-  const payload = getCurrentLineupPayload();
-
-  try {
-    const res = await fetch('/api/lineups', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
-
-    const data = await res.json();
-
-    if (!res.ok) {
-      alert('حدث خطأ أثناء إنشاء الرابط');
-      console.error(data);
-      return;
-    }
-
-    shareId = data.id;
-    const url = window.location.origin + '?share=' + shareId;
-
-    let copied = false;
-
-    if (navigator.clipboard && navigator.clipboard.writeText) {
+    async function enterGuestMode(id) {
       try {
-        await navigator.clipboard.writeText(url);
-        copied = true;
-      } catch (e) {
-        console.warn('clipboard api failed', e);
+        const res = await fetch('/api/lineups/' + id);
+        const data = await res.json();
+        if (!res.ok) {
+          alert(data.message || 'انتهت صلاحية الرابط أو غير موجود');
+          return;
+        }
+
+        const d = data.data;
+        teamANameInput.value = d.teamAName;
+        teamBNameInput.value = d.teamBName;
+        teamAColorInput.value = d.teamAColor;
+        teamBColorInput.value = d.teamBColor;
+        playersData = d.players;
+
+        playersCount = d.playersCount || 11;
+        if (playersCount < 7) playersCount = 7;
+        if (playersCount > 11) playersCount = 11;
+        playersCountSelect.value = String(playersCount);
+
+        if (d.positions) {
+          positions = d.positions;
+        } else {
+          resetPositionsFromFormation();
+        }
+
+        teamANameInput.disabled = true;
+        teamBNameInput.disabled = true;
+        teamAFormationSelect.disabled = true;
+        teamBFormationSelect.disabled = true;
+        teamAColorInput.disabled = true;
+        teamBColorInput.disabled = true;
+        playersCountSelect.disabled = true;
+
+        newSetupBtn.style.display = 'none';
+        shareBtn.style.display = 'none';
+        exportBtn.style.display = 'none';
+
+        mode = 'guest';
+        modeIndicator.innerText = 'وضع الضيف – يمكنك حجز مركز واحد باسمك أو إزالة اسمك من مركزك الحالي.';
+
+        updateTeamLabels();
+        updateKitPreviews();
+        renderTeams();
+
+        alert('اختر مركزاً فاضياً لحجزه باسمك، أو اضغط على مركزك الحالي لإزالة اسمك.');
+      } catch (err) {
+        console.error(err);
+        alert('تعذر تحميل التشكيلة');
       }
     }
 
-    if (!copied) {
-      const dummy = document.createElement('input');
-      dummy.value = url;
-      document.body.appendChild(dummy);
-      dummy.select();
+    async function exportAsImage() {
+      if (!window.html2canvas) {
+        alert('مكتبة التصدير غير متوفرة.');
+        return;
+      }
       try {
-        document.execCommand('copy');
-        copied = true;
-      } catch (e) {
-        console.warn('execCommand copy failed', e);
+        const canvas = await html2canvas(pitchCardEl, {
+          backgroundColor: null,
+          scale: 2
+        });
+        const dataUrl = canvas.toDataURL('image/png');
+        const link = document.createElement('a');
+        link.href = dataUrl;
+        link.download = 'lineup.png';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      } catch (err) {
+        console.error(err);
+        alert('تعذر تصدير الصورة.');
       }
-      document.body.removeChild(dummy);
     }
 
-    if (copied) {
-      alert('تم إنشاء رابط المشاركة (صالح لمدة 48 ساعة) وتم نسخه تلقائيًا.\n\nيمكنك الآن لصقه في أي مكان.\n\n' + url);
-    } else {
-      window.prompt('تم إنشاء رابط المشاركة (صالح لمدة 48 ساعة). انسخ الرابط يدويًا:', url);
-    }
-  } catch (err) {
-    console.error(err);
-    alert('تعذر الاتصال بالسيرفر');
-  }
-}
+    newSetupBtn.addEventListener('click', () => {
+      mode = 'owner';
+      shareId = null;
+      modeIndicator.innerText = 'وضع المالك – اضبط تشكيلتك، حرّك المراكز، ثم شارك أو صدّر';
 
-async function enterGuestMode(id) {
-  try {
-    const res = await fetch('/api/lineups/' + id);
-    const data = await res.json();
-    if (!res.ok) {
-      alert(data.message || 'انتهت صلاحية الرابط أو غير موجود');
-      return;
-    }
+      teamANameInput.disabled = false;
+      teamBNameInput.disabled = false;
+      teamAFormationSelect.disabled = false;
+      teamBFormationSelect.disabled = false;
+      teamAColorInput.disabled = false;
+      teamBColorInput.disabled = false;
+      playersCountSelect.disabled = false;
 
-    const d = data.data;
-    teamANameInput.value = d.teamAName;
-    teamBNameInput.value = d.teamBName;
-    teamAColorInput.value = d.teamAColor;
-    teamBColorInput.value = d.teamBColor;
-    playersData = d.players;
+      teamANameInput.value = 'فريق A';
+      teamBNameInput.value = 'فريق B';
+      teamAFormationSelect.value = '4-3-3';
+      teamBFormationSelect.value = '4-3-3';
+      teamAColorInput.value = '#2563eb';
+      teamBColorInput.value = '#dc2626';
 
-    playersCount = d.playersCount || 11;
-    if (playersCount < 7) playersCount = 7;
-    if (playersCount > 11) playersCount = 11;
-    playersCountSelect.value = String(playersCount);
+      playersData = {
+        A: Array(11).fill(null).map((_, i) => ({ number: i + 1, name: '', claimedBy: null })),
+        B: Array(11).fill(null).map((_, i) => ({ number: i + 1, name: '', claimedBy: null }))
+      };
 
-    if (d.positions) {
-      positions = d.positions;
-    } else {
+      playersCount = 11;
+      playersCountSelect.value = '11';
+
+      positions = { A: [], B: [] };
+
+      updateTeamLabels();
+      updateKitPreviews();
       resetPositionsFromFormation();
-    }
-
-    teamANameInput.disabled = true;
-    teamBNameInput.disabled = true;
-    teamAFormationSelect.disabled = true;
-    teamBFormationSelect.disabled = true;
-    teamAColorInput.disabled = true;
-    teamBColorInput.disabled = true;
-    playersCountSelect.disabled = true;
-
-    newSetupBtn.style.display = 'none';
-    shareBtn.style.display = 'none';
-    exportBtn.style.display = 'none';
-
-    mode = 'guest';
-    modeIndicator.innerText = 'وضع الضيف – يمكنك حجز مركز واحد باسمك أو إزالة اسمك من مركزك الحالي.';
-
-    updateTeamLabels();
-    updateKitPreviews();
-    renderTeams();
-
-    alert('اختر مركزاً فاضياً لحجزه باسمك، أو اضغط على مركزك الحالي لإزالة اسمك.');
-  } catch (err) {
-    console.error(err);
-    alert('تعذر تحميل التشكيلة');
-  }
-}
-
-async function exportAsImage() {
-  if (!window.html2canvas) {
-    alert('مكتبة التصدير غير متوفرة.');
-    return;
-  }
-  try {
-    const canvas = await html2canvas(pitchCardEl, {
-      backgroundColor: null,
-      scale: 2
+      renderTeams();
     });
-    const dataUrl = canvas.toDataURL('image/png');
-    const link = document.createElement('a');
-    link.href = dataUrl;
-    link.download = 'lineup.png';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  } catch (err) {
-    console.error(err);
-    alert('تعذر تصدير الصورة.');
-  }
-}
 
-newSetupBtn.addEventListener('click', () => {
-  mode = 'owner';
-  shareId = null;
-  modeIndicator.innerText = 'وضع المالك – اضبط تشكيلتك، حرّك المراكز، ثم شارك أو صدّر';
+    shareBtn.addEventListener('click', createShareLink);
+    exportBtn.addEventListener('click', exportAsImage);
 
-  teamANameInput.disabled = false;
-  teamBNameInput.disabled = false;
-  teamAFormationSelect.disabled = false;
-  teamBFormationSelect.disabled = false;
-  teamAColorInput.disabled = false;
-  teamBColorInput.disabled = false;
-  playersCountSelect.disabled = false;
+    [teamANameInput, teamBNameInput].forEach((input) => {
+      input.addEventListener('input', updateTeamLabels);
+    });
 
-  teamANameInput.value = 'فريق A';
-  teamBNameInput.value = 'فريق B';
-  teamAFormationSelect.value = '4-3-3';
-  teamBFormationSelect.value = '4-3-3';
-  teamAColorInput.value = '#2563eb';
-  teamBColorInput.value = '#dc2626';
+    [teamAFormationSelect, teamBFormationSelect].forEach((sel) => {
+      sel.addEventListener('change', () => {
+        resetPositionsFromFormation();
+        renderTeams();
+      });
+    });
 
-  playersData = {
-    A: Array(11).fill(null).map((_, i) => ({ number: i + 1, name: '', claimedBy: null })),
-    B: Array(11).fill(null).map((_, i) => ({ number: i + 1, name: '', claimedBy: null }))
-  };
+    [teamAColorInput, teamBColorInput].forEach((input) => {
+      input.addEventListener('input', () => {
+        updateKitPreviews();
+        renderTeams();
+      });
+    });
 
-  playersCount = 11;
-  playersCountSelect.value = '11';
+    playersCountSelect.addEventListener('change', () => {
+      const val = parseInt(playersCountSelect.value, 10);
+      if (!isNaN(val)) {
+        playersCount = val;
+      } else {
+        playersCount = 11;
+      }
+      if (playersCount < 7) playersCount = 7;
+      if (playersCount > 11) playersCount = 11;
+      resetPositionsFromFormation();
+      renderTeams();
+    });
 
-  positions = { A: [], B: [] };
+    enableBenchEditing(benchGlobal);
 
-  updateTeamLabels();
-  updateKitPreviews();
-  resetPositionsFromFormation();
-  renderTeams();
-});
-
-shareBtn.addEventListener('click', createShareLink);
-exportBtn.addEventListener('click', exportAsImage);
-
-[teamANameInput, teamBNameInput].forEach((input) => {
-  input.addEventListener('input', updateTeamLabels);
-});
-
-[teamAFormationSelect, teamBFormationSelect].forEach((sel) => {
-  sel.addEventListener('change', () => {
-    resetPositionsFromFormation();
-    renderTeams();
-  });
-});
-
-[teamAColorInput, teamBColorInput].forEach((input) => {
-  input.addEventListener('input', () => {
-    updateKitPreviews();
-    renderTeams();
-  });
-});
-
-playersCountSelect.addEventListener('change', () => {
-  const val = parseInt(playersCountSelect.value, 10);
-  if (!isNaN(val)) {
-    playersCount = val;
-  } else {
-    playersCount = 11;
-  }
-  if (playersCount < 7) playersCount = 7;
-  if (playersCount > 11) playersCount = 11;
-  resetPositionsFromFormation();
-  renderTeams();
-});
-
-enableBenchEditing(benchGlobal);
-
-const params = new URLSearchParams(window.location.search);
-if (params.has('share')) {
-  shareId = params.get('share');
-  enterGuestMode(shareId);
-} else {
-  updateTeamLabels();
-  updateKitPreviews();
-  resetPositionsFromFormation();
-  renderTeams();
-}
+    const params = new URLSearchParams(window.location.search);
+    if (params.has('share')) {
+      shareId = params.get('share');
+      enterGuestMode(shareId);
+    } else {
+      updateTeamLabels();
+      updateKitPreviews();
+      resetPositionsFromFormation();
+      renderTeams();
+    }
   </script>
 </body>
 </html>
