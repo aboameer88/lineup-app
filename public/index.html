@@ -599,19 +599,46 @@ body.guest-mode .panel {
   display: none !important;
 }
 
-/* تدوير الملعب نفسه */
+/* 🌟 وضع الضيف: ملعب طولي كامل من أعلى لأسفل */
+body.guest-mode .app-shell {
+  max-width: 480px; /* مناسب للجوال */
+}
+
+/* تخلي الصفحة عمود واحد في وضع الضيف */
+body.guest-mode .layout {
+  grid-template-columns: 1fr;
+}
+
+/* لو حاب تخفي إعدادات الفرق عن الضيف */
+body.guest-mode .panel {
+  display: none !important;
+}
+
+/* نجعل الغلاف أطول قليلاً (طولي) */
+body.guest-mode .pitch-wrapper {
+  padding-top: 150%; /* أطول من العادي */
+  background: #14532d; /* لون عشب غامق تحت الصورة */
+}
+
+/* نستخدم صورة الملعب الطولي بدل الخطوط المرسومة */
 body.guest-mode .pitch {
-  transform: rotate(90deg);
-  transform-origin: 50% 50%;
+  inset: 0;
+  border: none;
+  background-image: url('images/pitch-vertical.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  border-radius: 20px;
 }
 
-/* تدوير اللاعبين عكس الملعب لكي يظهر القميص مستقيم */
-body.guest-mode .player {
-  transform: translate(-50%, -50%) rotate(-90deg);
+/* نخفي الخطوط اليدوية لأن الصورة فيها الخطوط */
+body.guest-mode .center-line,
+body.guest-mode .pitch-line,
+body.guest-mode .pen-spot,
+body.guest-mode .center-spot {
+  display: none !important;
 }
 
-/* لو عندك تعريف سابق لـ .player خارج guest-mode فهو يظل كما هو.
-   هذا الـ rule يشتغل فقط عندما body عليه guest-mode. */
 
   </style>
 </head>
@@ -806,6 +833,34 @@ body.guest-mode .player {
         { x: 42, y: 50 }
       ]
     };
+// 📍 توزيع عمودي خاص بوضع الضيف (ملعب طولي)
+const verticalBaseA = [
+  // GK (قريب من أعلى المرمى العلوي)
+  { x: 50, y: 9 },
+
+  // خط الدفاع (٤ لاعبين) على عرض الملعب تقريباً
+  { x: 20, y: 22 },
+  { x: 40, y: 22 },
+  { x: 60, y: 22 },
+  { x: 80, y: 22 },
+
+  // خط الوسط (٣ لاعبين)
+  { x: 25, y: 40 },
+  { x: 50, y: 40 },
+  { x: 75, y: 40 },
+
+  // الهجوم (٣ لاعبين)
+  { x: 33, y: 60 },
+  { x: 66, y: 60 },
+  { x: 50, y: 72 }
+];
+
+// نفس التوزيع مقلوب للفريق B (أسفل الملعب)
+const verticalBaseB = verticalBaseA.map(p => ({
+  x: p.x,
+  y: 100 - p.y
+}));
+
 
     const pitchEl = document.getElementById('pitch');
     const pitchCardEl = document.getElementById('pitch-card');
@@ -894,7 +949,19 @@ function ensurePositionsForTeam(team) {
   const form = team === 'A' ? teamAFormationSelect.value : teamBFormationSelect.value;
   const base = formations[form] || formations['4-3-3'];
 
-  // التوزيع العادي القديم (فريق A يسار، فريق B يمين)
+  const isGuestVertical = document.body.classList.contains('guest-mode');
+
+  // 🌟 في وضع الضيف: نستخدم توزيع عمودي ثابت (فريق فوق / فريق تحت)
+  if (isGuestVertical) {
+    const verticalBase = team === 'A' ? verticalBaseA : verticalBaseB;
+    positions[team] = verticalBase.slice(0, playersCount).map((p) => ({
+      x: p.x,
+      y: p.y
+    }));
+    return;
+  }
+
+  // 👇 في وضع المالك: التوزيع القديم كما هو (فريق يسار/يمين)
   if (!positions[team] || positions[team].length === 0) {
     positions[team] = base.slice(0, playersCount).map((p) => {
       if (team === 'A') {
@@ -916,6 +983,7 @@ function ensurePositionsForTeam(team) {
     }
   }
 }
+
 
     function resetPositionsFromFormation() {
       positions.A = [];
